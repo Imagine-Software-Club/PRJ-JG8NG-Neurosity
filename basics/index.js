@@ -44,6 +44,7 @@ const verifyEnvs =(email, password, deviceId) =>{
     };
     
 }
+
 verifyEnvs(email, password, deviceId);
 console.log(`${email} authenticating ${deviceId}`);
 
@@ -83,19 +84,31 @@ const main = async () => {
     await loginDevice(neurosity_data, email, password);
 
     console.log('Logged in');
+    if(argv.label === ''){
+        argv.label = 'output';
+    }
+
     const filename = `data/${argv.label}.csv`;
+
     /*Appends data to a CSV file*/
-    function appendToCsv(dataObj, filename) {
+    async function appendToCsv(dataObj, filename) {
+
         const { data, info } = dataObj;
         let fileExists = fs.existsSync(filename);
         
-        let csvContent = fileExists ? '' : 'Timestamp,' + info.channelNames.join(',') + '\n';
+        let csvContent = fileExists ? '' : info.channelNames.join(',') + '\n';
+        const rows = [];
 
-        
-        data.forEach((dataArray, idx) => {
-            const timestamp = info.startTime + (idx * (1000 / info.samplingRate));
-            csvContent += timestamp + ',' + dataArray.join(',') + '\n';
+        dataObj.data.forEach(array => {
+            const midpoint = array.length / 2;
+            const row1 = array.slice(0, midpoint);
+            const row2 = array.slice(midpoint);
+            csvContent += row1.join(',') + '\n';
+            csvContent += row2.join(',') + '\n';
         });
+        
+        
+
 
         if (fileExists) {
             fs.appendFileSync(filename, csvContent);
@@ -120,13 +133,9 @@ const main = async () => {
     });
     neurosity_data.brainwaves("rawUnfiltered").subscribe((data) => {
         appendToCsv(data, filename);
+        console.log(data);
         
     });
-
-
-
-
 }
-
 
 main();
