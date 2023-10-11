@@ -1,0 +1,27 @@
+{
+  "name": "prj-jg8ng-neurosity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Imagine-Software-Club/PRJ-JG8NG-Neurosity.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Imagine-Software-Club/PRJ-JG8NG-Neurosity/issues"
+  },
+  "homepage": "https://github.com/Imagine-Software-Club/PRJ-JG8NG-Neurosity#readme",
+  "dependencies": {
+    "@neurosity/sdk": "^6.5.9",
+    "dotenv": "^16.3.1",
+    "rxjs": "^7.8.1",
+    "yargs": "^17.7.2"
+  }
+}
