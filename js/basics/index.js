@@ -93,9 +93,14 @@ const main = async () => {
         argv.label = 'output';
     }
 
+<<<<<<< HEAD:js/basics/index.js
     const filename_unfiltered = `data/${argv.label}_unfiltered.csv`;
     const filename_filtered = `data/${argv.label}_filtered.csv`;
     const filename_focus = `data/${argv.label}_focus.csv`
+=======
+    const filename = `data/${argv.label}.csv`;
+
+>>>>>>> 7bc72d1590ca87bd04750f049fbcb957af7e9ef4:basics/index.js
     /*Appends data to a CSV file*/
     async function appendToCsv(dataObj, filename) {
 
@@ -152,6 +157,7 @@ const main = async () => {
         appendToCsvFocus(focus, filename_focus);
     });
     neurosity_data.brainwaves("rawUnfiltered").subscribe((data) => {
+<<<<<<< HEAD:js/basics/index.js
         appendToCsv(data, filename_unfiltered);
         
         
@@ -159,6 +165,12 @@ const main = async () => {
     neurosity_filtered_data.brainwaves("raw").subscribe((data) =>{
         appendToCsv(data, filename_filtered);
     })
+=======
+        appendToCsv(data, filename);
+        console.log(data);
+        
+    });
+>>>>>>> 7bc72d1590ca87bd04750f049fbcb957af7e9ef4:basics/index.js
 }
 
 main();
