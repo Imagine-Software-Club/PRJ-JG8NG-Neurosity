@@ -4,6 +4,7 @@ const { from } = require('rxjs');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const { time } = require("console");
+var nj = require('numjs');
 
 /*Loads in the env variables for safe credentials storage */
 /** In our case we have Device Id, email and password */
@@ -93,30 +94,42 @@ const main = async () => {
         argv.label = 'output';
     }
 
-<<<<<<< HEAD:js/basics/index.js
     const filename_unfiltered = `data/${argv.label}_unfiltered.csv`;
     const filename_filtered = `data/${argv.label}_filtered.csv`;
     const filename_focus = `data/${argv.label}_focus.csv`
-=======
-    const filename = `data/${argv.label}.csv`;
 
->>>>>>> 7bc72d1590ca87bd04750f049fbcb957af7e9ef4:basics/index.js
-    /*Appends data to a CSV file*/
     async function appendToCsv(dataObj, filename) {
 
         const { data, info } = dataObj;
         let fileExists = fs.existsSync(filename);
         
         let csvContent = fileExists ? '' : info.channelNames.join(',') + '\n';
-        const rows = [];
-
+        let rows = [];
+        
+        let temp_row = []
         dataObj.data.forEach(array => {
-            const midpoint = array.length / 2;
-            const row1 = array.slice(0, midpoint);
-            const row2 = array.slice(midpoint);
-            csvContent += row1.join(',') + '\n';
-            csvContent += row2.join(',') + '\n';
+                
+            
+            for(i=0; i < array.length; i++){
+                try{
+                
+                    temp_row[i].push(array[i]);
+                
+                }catch(error){
+                    temp_row[i] = [array[i]];
+                }
+            } 
+            
+           
+           //  
+            
+
+            
         });
+        temp_row.forEach(value => {
+            csvContent += value.join(',') + '\n';
+        });
+        //console.log(rows);
         
         
 
@@ -148,16 +161,16 @@ const main = async () => {
     For multiple     
     */ 
     neurosity_kinesis.predictions("rightIndexFinger").subscribe((prediction) => {
-        console.log("predictions", prediction);
+        //onsole.log("predictions", prediction);
     });
     neurosity_calm.calm().subscribe((calm) =>{
-        console.log(calm);
+        //console.log(calm);
     });
     neurosity_focus.focus().subscribe((focus) =>{
         appendToCsvFocus(focus, filename_focus);
     });
     neurosity_data.brainwaves("rawUnfiltered").subscribe((data) => {
-<<<<<<< HEAD:js/basics/index.js
+
         appendToCsv(data, filename_unfiltered);
         
         
@@ -165,12 +178,7 @@ const main = async () => {
     neurosity_filtered_data.brainwaves("raw").subscribe((data) =>{
         appendToCsv(data, filename_filtered);
     })
-=======
-        appendToCsv(data, filename);
-        console.log(data);
-        
-    });
->>>>>>> 7bc72d1590ca87bd04750f049fbcb957af7e9ef4:basics/index.js
+
 }
 
 main();
