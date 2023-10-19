@@ -5,12 +5,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB03Et0W-Xwpa2OO1d65ahF5SH_zVdjPDg",
-  authDomain: "neurosity-crown.firebaseapp.com",
-  projectId: "neurosity-crown",
-  storageBucket: "neurosity-crown.appspot.com",
-  messagingSenderId: "177033816422",
-  appId: "1:177033816422:web:11221f9e46ccd227d1c0a7"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderIFd: process.env.FIREBASE_MESSAGING_SENDER_IFD,
+  appId: process.env.FIREBASE_APP_ID
 };
 
 // Initialize Firebase
