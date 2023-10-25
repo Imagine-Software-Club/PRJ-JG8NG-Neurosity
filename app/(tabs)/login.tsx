@@ -7,26 +7,39 @@ import {
 } from 'react-native'
 
 
+const textFont = 'Arial'
 
 
-
-const LogIn = () => {
+export default function LoginScreen() {
     return (
-        <View>
-            <ImageBackground source={require('../../assets/images/background.png')} >
-                <View>
-                    <Text>Neurosity Crown</Text>
-                </View>
-                <View>
-                    {/* <Button></Button> */}
-                </View>
-            </ImageBackground>
+        <View style={styles.container}>
+            <View>
+                <Text style={styles.title}>Neurosity Crown</Text>
+            </View>
+            <View>
+                {/* <Button></Button> */}
+            </View>
         </View>
     )
 }
 
-export default LogIn
 
 const styles = StyleSheet.create({
-
-})
+  container: {
+    backgroundColor: '#606C38',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 48,
+    alignItems: 'center',
+    fontWeight: 'bold',
+    color: '#FEFAE0',
+    fontFamily: textFont,
+  }
+});
