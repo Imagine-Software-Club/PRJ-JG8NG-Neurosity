@@ -22,12 +22,7 @@ export default function LoginScreen() {
                 <Text style={styles.title}>Neurosity Crown</Text>
             </View>
             <View>
-                <Button style={styles.button} title="Login With Email"></Button>
-                <Button style={styles.button} title="Twitter"></Button>
-                <Button style={styles.button} title="GitHub"></Button>
-                <Button style={styles.button} title="X"></Button>
                 <Button style={styles.button} title="Google"></Button>
-                <Button style={styles.button} title="Facebook"></Button>
                 {/* <Button></Button> */}
             </View>
         </View>
