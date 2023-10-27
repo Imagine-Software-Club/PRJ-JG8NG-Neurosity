@@ -1,24 +1,31 @@
-import {auth, provider} from "../firebase";
-import { signInWithPopup } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import app from '../firebase';
+import firebase from 'firebase/app';
+import { GoogleSignin } from 'firebase/auth';
+import { GoogleSigninButton } from 'react-native-firebaseui';
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-export default function SignIn() {
+const auth = getAuth(app);
 
-	const [value, setValue] = useState('');
-	const handleClick = () => {
-		signInWithPopup(auth, provider).then((data)=>{
-			setValue(data.user.email);
-			localStorage.setItem("email", data.user.email);
-		});
-	}
+const GoogleAuthButton = () => {
+  const signInWithGoogle = async () => {
+    try {
+      const { idToken } = await GoogleSignin.signIn();
+      const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
+      await auth().signInWithCredential(googleCredential);
+      // User is signed in
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-	useEffect(()=> {
-		setValue(localStorage.getItem('email'));
-	});
+  return (
+    <GoogleSigninButton
+      style={{ width: 192, height: 48 }}
+      size={GoogleSigninButton.Size.Wide}
+      color={GoogleSigninButton.Color.Light}
+      onPress={signInWithGoogle}
+    />
+  );
+};
 
-	return (
-	<div>
-		<button onClick={handleClick}> Sign in with Google</button>
-	</div>
-	);
-}
+export default GoogleAuthButton;

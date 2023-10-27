@@ -7,10 +7,10 @@ import {
     Pressable
 } from 'react-native'
 
-import firebase from 'firebase/compat/app';
-import * as firebaseui from 'firebaseui'
+//import firebase from 'firebase/compat/app';
+//import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
-
+import GoogleAuthButton from '../signin'
 
 const textFont = 'Arial'
 
@@ -21,10 +21,7 @@ export default function LoginScreen() {
             <View>
                 <Text style={styles.title}>Neurosity Crown</Text>
             </View>
-            <View>
-                <Button style={styles.button} title="Google"></Button>
-                {/* <Button></Button> */}
-            </View>
+            {/*<GoogleAuthButton/>*/}
         </View>
     )
 }
