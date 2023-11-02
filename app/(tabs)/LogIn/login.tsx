@@ -11,13 +11,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import FontAwesome6Brands from 'react-native-vector-icons/FontAwesome'
 
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import app from '../../../firebase';
 
 const provider = new GoogleAuthProvider();
 
 
 const GoogleSigin = () => {
 
-const auth = getAuth();
+const auth = getAuth(app);
   signInWithPopup(auth, provider)
     .then((result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
