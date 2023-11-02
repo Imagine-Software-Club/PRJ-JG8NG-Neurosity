@@ -1,45 +1,42 @@
-import {
-    View, 
-    Text, 
-    ImageBackground,
-    Button,
-    StyleSheet,
-    Pressable
-} from 'react-native'
+import GoogleSignInButton from "../signin";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google"
+import {GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithCredential} from 'firebase/auth';
+import app from "D:/Minh/PRJ-JG8NG-Neurosity/firebase";
+import * as React from 'react'
 
-//import firebase from 'firebase/compat/app';
-//import * as firebaseui from 'firebaseui'
-import 'firebaseui/dist/firebaseui.css'
-import GoogleAuthButton from '../signin'
 
-const textFont = 'Arial'
+const auth = getAuth(app)
 
+WebBrowser.maybeCompleteAuthSession()
 
 export default function LoginScreen() {
-    return (
-        <View style={styles.container}>
-            <View>
-                <Text style={styles.title}>Neurosity Crown</Text>
-            </View>
-            {/*<GoogleAuthButton/>*/}
-        </View>
-    )
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    // iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+    // androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    redirectUri: process.env.EXPO_PUBLIC_GOOGLE_AUTHORIZED_REDIRECT_URI
+  })
+
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      const {id_token} = response.params
+      const credential = GoogleAuthProvider.credential(id_token)
+      signInWithCredential(auth, credential)
+    }
+  },[response])
+
+  // React.useEffect(() => {
+  //   const unsub = onAuthStateChanged(auth, async(user) => {
+  //     if (user) {
+  //       console.log(JSON.stringify(user,null,2))
+  //     } else {
+  //       console.log("Failed")
+  //     }
+  //   })
+
+  //   return () => unsub()
+  // },[])
+
+  return <GoogleSignInButton promptAsync={promptAsync}/>
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#606C38',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    flex: 0,
-    fontSize: 48, // Subject to change
-    alignItems: 'center',
-    fontWeight: 'bold',
-    color: '#FEFAE0',
-    fontFamily: textFont,
-  }
-});

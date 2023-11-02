@@ -1,31 +1,9 @@
-import app from '../firebase';
-import firebase from 'firebase/app';
-import { GoogleSignin } from 'firebase/auth';
-import { GoogleSigninButton } from 'react-native-firebaseui';
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import {View, Button} from 'react-native'
 
-const auth = getAuth(app);
-
-const GoogleAuthButton = () => {
-  const signInWithGoogle = async () => {
-    try {
-      const { idToken } = await GoogleSignin.signIn();
-      const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
-      await auth().signInWithCredential(googleCredential);
-      // User is signed in
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+export default function GoogleSignInButton({promptAsync} : {promptAsync:() => void}) {
   return (
-    <GoogleSigninButton
-      style={{ width: 192, height: 48 }}
-      size={GoogleSigninButton.Size.Wide}
-      color={GoogleSigninButton.Color.Light}
-      onPress={signInWithGoogle}
-    />
-  );
-};
-
-export default GoogleAuthButton;
+    <View>
+      <Button title='Sign in with Google' onPress={() => promptAsync()}></Button>
+    </View>
+  )
+}
