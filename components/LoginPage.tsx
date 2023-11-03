@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../app/AppNavigator';
-import auth from '@react-native-firebase/auth';
+import React, { useState, useContext } from 'react';
+import { TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { Text, View } from './Themed';
+//import { UserContext } from '../../context/UserContext';
+// import auth from '@react-native-firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import app from '../firebase';
 
-type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
-type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+const auth = getAuth(app);
 
-type Props = {
-  route: LoginScreenRouteProp;
-  navigation: LoginScreenNavigationProp;
-};
+type FormType = 'login' | 'signup' | null;
 
-const LoginPage: React.FC<Props> = ({ route, navigation }) => {
+export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState(''); 
+  const [username, setUsername] = useState('');
+  const [formType, setFormType] = useState<FormType>(null);
+  const [displayName, setDisplayName] = useState('');
+  //const { user, setUser } = useContext(UserContext);
 
   const handleLogin = async () => {
+    console.log("Login attempt");
     try {
-      await auth().signInWithEmailAndPassword(email, password);
-      navigation.navigate('Profile');
+      await signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+        if (userCredential.user) {
+          setDisplayName(userCredential.user.displayName || 'User');
+        }
+      });
     } 
     catch (error) {
       if (error instanceof Error) {
@@ -35,15 +39,15 @@ const LoginPage: React.FC<Props> = ({ route, navigation }) => {
 
   const handleSignup = async () => {
     try {
-      await auth().createUserWithEmailAndPassword(email, password);
-      const user = auth().currentUser;
-      if (user) {
-        await user.updateProfile({ displayName: username });
-        navigation.navigate('Profile');
-      } 
-      else {
-        Alert.alert('Error', 'User not found');
-      }
+      await createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
+        if (userCredential.user) {
+          await updateProfile(userCredential.user, { displayName: username });
+          setDisplayName(userCredential.user.displayName || 'User');
+        } 
+        else {
+          Alert.alert('Signup Error', 'Unable to find user after signup');
+        }
+      });
     } 
     catch (error) {
       if (error instanceof Error) {
@@ -55,31 +59,98 @@ const LoginPage: React.FC<Props> = ({ route, navigation }) => {
     }
   };
 
+  const renderForm = () => {
+    switch (formType) {
+      case 'login':
+        return (
+          <>
+            <TextInput
+              style={styles.input}
+              onChangeText={setEmail}
+              value={email}
+              placeholder="Email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={setPassword}
+              value={password}
+              placeholder="Password"
+              secureTextEntry
+            />
+            <Button title="Login" onPress={handleLogin} />
+          </>
+        );
+      case 'signup':
+        return (
+          <>
+            <TextInput
+              style={styles.input}
+              onChangeText={setEmail}
+              value={email}
+              placeholder="Email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={setUsername}
+              value={username}
+              placeholder="Username"
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={setPassword}
+              value={password}
+              placeholder="Password"
+              secureTextEntry
+            />
+            <Button title="Signup" onPress={handleSignup} />
+          </>
+        );
+      default:
+        return (
+          <>
+            <Button title="Login" onPress={() => setFormType('login')} />
+            <Button title="Signup" onPress={() => setFormType('signup')} />
+          </>
+        );
+    }
+  };
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
-      <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-        onChangeText={setEmail}
-        value={email}
-        placeholder="Email"
-      />
-      <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-        onChangeText={setPassword}
-        value={password}
-        placeholder="Password"
-        secureTextEntry
-      />
-      <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10 }}
-        onChangeText={setUsername}
-        value={username}
-        placeholder="Username"
-      />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Signup" onPress={handleSignup} />
+    <View>
+      {renderForm()}
+      {displayName !== '' && (
+        <Text style={styles.displayName}>Hello, {displayName}!</Text>
+        //<Text>Hello, {username}</Text>
+      )}
     </View>
   );
-}
+};
+
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    color:'white'
+  },
+  displayName: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color:'white'
+  },
+});
 
 export default LoginPage;

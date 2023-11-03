@@ -3,6 +3,7 @@ import { Link, Tabs } from 'expo-router';
 import { Pressable, useColorScheme } from 'react-native';
 
 import Colors from '../../constants/Colors';
+import Login from './login';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -50,6 +51,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="Login"
+        options={{
+          title: 'Login',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />
+        }}
+      />
     </Tabs>
+    
   );
 }
