@@ -1,8 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState} from 'react';
 import { TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { Text, View } from './Themed';
-//import { UserContext } from '../../context/UserContext';
-// import auth from '@react-native-firebase/auth';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import app from '../firebase';
 
@@ -16,7 +14,6 @@ export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [formType, setFormType] = useState<FormType>(null);
   const [displayName, setDisplayName] = useState('');
-  //const { user, setUser } = useContext(UserContext);
 
   const handleLogin = async () => {
     console.log("Login attempt");
@@ -124,13 +121,10 @@ export const LoginPage: React.FC = () => {
       {renderForm()}
       {displayName !== '' && (
         <Text style={styles.displayName}>Hello, {displayName}!</Text>
-        //<Text>Hello, {username}</Text>
       )}
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
