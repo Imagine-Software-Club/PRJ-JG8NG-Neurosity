@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 
 const Navigation: React.FC = () => {
   return (
-    <NavigationContainer independent={true}>
+    <NavigationContainer independent={false}>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginPage} />
         <Stack.Screen name="Home" component={HomePage} />

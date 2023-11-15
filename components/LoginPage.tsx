@@ -42,8 +42,7 @@ export const LoginPage: React.FC = () => {
         if (userCredential.user) {
           setIsLoggedIn(true);
           setDisplayName(userCredential.user.displayName || 'User');
-          navigation.navigate('Home');
-
+          setFormType(null)
         }
       });
     } 
@@ -59,11 +58,22 @@ export const LoginPage: React.FC = () => {
 
   const handleSignup = async () => {
     try {
+      if (!username)
+      {
+        Alert.alert("Please type in a username");
+      }
+
       await createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
         if (userCredential.user) {
           await updateProfile(userCredential.user, { displayName: username });
           setIsLoggedIn(true);
           setDisplayName(userCredential.user.displayName || 'User');
+
+          /// Reset state
+          setDisplayName('')
+          setEmail('')
+          setPassword('')
+          setUsername('')
         } 
         else {
           Alert.alert('Signup Error', 'Unable to find user after signup');
@@ -85,6 +95,7 @@ export const LoginPage: React.FC = () => {
       await signOut(auth); 
       setIsLoggedIn(false); 
       setDisplayName('');
+      navigation.navigate('Home')
     } 
     catch (error) {
       if (error instanceof Error) {
