@@ -77,7 +77,7 @@ const SignupPage: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0.5,
+        flex: 0.6,
         justifyContent: 'center',
         padding: 20,
     },

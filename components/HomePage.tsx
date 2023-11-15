@@ -1,6 +1,6 @@
 import { User, onAuthStateChanged, signOut } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { auth } from '../firebase';
 import { useNavigation } from '@react-navigation/native';
 
@@ -33,7 +33,7 @@ const HomePage = () => {
       console.log("user: ", user);
       setUser(user);
     });
-  },[]);
+  }, []);
   const welcomeMessage = user ? `Welcome, ${user.displayName || 'User'}` : 'Welcome to Your App';
 
   return (
@@ -43,8 +43,15 @@ const HomePage = () => {
       </View>
       <View style={styles.content}>
         <Text style={styles.subtitle}>Enjoy the app's features</Text>
-        <Button title="Get Started" onPress={() => console.log('Getting Started')} />
-        <Button title="Log Out" onPress={handleLogout} />
+
+        <TouchableOpacity style={styles.button} onPress={() => console.log('Getting Started')}>
+          <Text style={styles.buttonContent}>Get Started</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={handleLogout}>
+          <Text style={styles.buttonContent}>Log out</Text>
+        </TouchableOpacity>
+
       </View>
     </View>
   );
@@ -72,6 +79,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
   },
+  button: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B2BEB5',
+    padding: 10,
+    borderRadius: 10,
+    margin: 10,
+    height: 50,
+  },
+  buttonContent: {
+    fontSize: 18,
+  }
 });
 
 export default HomePage;

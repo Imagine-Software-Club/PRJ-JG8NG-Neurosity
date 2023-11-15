@@ -14,8 +14,8 @@ export default function Navigation() {
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName="Landing">
         <Stack.Screen name='Landing' component={LandingPage} options={{headerShown: false}}/>
-        <Stack.Screen name='Sign up' component={SignupPage} options={{headerShown: false}}/>
-        <Stack.Screen name="Log in" component={LoginPage} options={{headerShown: false}}/>
+        <Stack.Screen name='Sign up' component={SignupPage} options={{headerShown: true}}/>
+        <Stack.Screen name="Log in" component={LoginPage} options={{headerShown: true}}/>
         <Stack.Screen name="Home" component={HomePage} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
