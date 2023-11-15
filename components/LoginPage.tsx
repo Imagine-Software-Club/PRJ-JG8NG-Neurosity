@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, Button, Alert, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Text, View } from './Themed';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
+import { View, TextInput, Button, Alert, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Text } from './Themed';
+import { getAuth, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { launchImageLibrary, ImageLibraryOptions } from 'react-native-image-picker';
 import { app } from '../firebase';
 import { useNavigation } from '@react-navigation/native';
+
 const auth = getAuth(app);
 
-type FormType = 'login' | 'signup' | null;
-
-export const LoginPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const navigation = useNavigation();
-  const defaultPhotoPath:string = '../assets/images/default_profile_pic.png';
+  const defaultPhotoPath: string = '../assets/images/default_profile_pic.png';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [formType, setFormType] = useState<FormType>(null);
   const [displayName, setDisplayName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profilePic, setProfilePic] = useState<string | null>(null);
@@ -42,77 +39,41 @@ export const LoginPage: React.FC = () => {
         if (userCredential.user) {
           setIsLoggedIn(true);
           setDisplayName(userCredential.user.displayName || 'User');
-          navigation.navigate('Home');
+          setEmail("")
+          setPassword("")
+          navigation.navigate('Home' as never);
 
         }
       });
-    } 
+    }
     catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Error', error.message);
-      } 
+        Alert.alert('Error', "Please sign up first or make sure your email and password are correct");
+      }
       else {
         Alert.alert('Error', 'An unknown error occurred');
       }
     }
   };
 
-  const handleSignup = async () => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
-        if (userCredential.user) {
-          await updateProfile(userCredential.user, { displayName: username });
-          setIsLoggedIn(true);
-          setDisplayName(userCredential.user.displayName || 'User');
-        } 
-        else {
-          Alert.alert('Signup Error', 'Unable to find user after signup');
-        }
-      });
-    } 
-    catch (error) {
-      if (error instanceof Error) {
-        Alert.alert('Error', error.message);
-      } 
-      else {
-        Alert.alert('Error', 'An unknown error occurred');
-      }
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth); 
-      setIsLoggedIn(false); 
-      setDisplayName('');
-    } 
-    catch (error) {
-      if (error instanceof Error) {
-        Alert.alert('Error', error.message);
-      } 
-      else {
-        Alert.alert('Error', 'An unknown error occurred');
-      }
-    }
-  };
 
   const handleProfilePicUpload = async (imageBlob: Blob) => {
     const storage = getStorage(app, 'gs://neurosity-crown.appspot.com');
-    if (auth.currentUser){
+    if (auth.currentUser) {
       const storageRef = ref(storage, 'profile_pics/' + auth.currentUser.uid);
       try {
         await uploadBytes(storageRef, imageBlob);
         const photoURL = await getDownloadURL(storageRef);
         await updateProfile(auth.currentUser, { photoURL });
         setProfilePic(photoURL);
-      } 
+      }
       catch (error) {
         Alert.alert('Error', 'There was an error uploading the image');
       }
     }
     else {
       Alert.alert('Error', 'No user is currently signed in');
-    } 
+    }
   };
 
   const selectImage = () => {
@@ -126,10 +87,10 @@ export const LoginPage: React.FC = () => {
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
-      } 
+      }
       else if (response.errorMessage) {
         console.log('ImagePicker Error: ', response.errorMessage);
-      } 
+      }
       else if (response.assets && response.assets.length > 0) {
         const selectedAsset = response.assets[0];
         //const source = { uri: selectedAsset.uri };
@@ -163,91 +124,54 @@ export const LoginPage: React.FC = () => {
     });
   };
 
-  const renderForm = () => {
-    if (isLoggedIn) {
-      return (
-        <>
-          <Text style={styles.displayName}>Hello, {displayName}!</Text>
-          <Image
-            source={profilePic ? { uri: profilePic } : require(defaultPhotoPath)}
-            style={styles.profilePic}
-          />
-          <TouchableOpacity onPress={selectImage}>
-            <Text>Upload Profile Picture</Text>
-          </TouchableOpacity>
-          <Button title="Logout" onPress={handleLogout} />
-        </>
-      );
-    }
-    switch (formType) {
-      case 'login':
-        return (
-          <>
-            <TextInput
-              style={styles.input}
-              onChangeText={setEmail}
-              value={email}
-              placeholder="Email"
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={setPassword}
-              value={password}
-              placeholder="Password"
-              secureTextEntry
-            />
-            <Button title="Submit" onPress={handleLogin} />
-          </>
-        );
-      case 'signup':
-        return (
-          <>
-            <TextInput
-              style={styles.input}
-              onChangeText={setEmail}
-              value={email}
-              placeholder="Email"
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={setUsername}
-              value={username}
-              placeholder="Username"
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={setPassword}
-              value={password}
-              placeholder="Password"
-              secureTextEntry
-            />
-            <Button title="Submit" onPress={handleSignup} />
-          </>
-        );
-      default:
-        return (
-          <>
-            <Button title="Login" onPress={() => setFormType('login')} />
-            <Button title="Signup" onPress={() => setFormType('signup')} />
-          </>
-        );
-    }
-  };
-
+  // if (isLoggedIn) {
+  //   return (
+  //     <>
+  //       <Text style={styles.displayName}>Hello, {displayName}!</Text>
+  //       <Image
+  //         source={profilePic ? { uri: profilePic } : require(defaultPhotoPath)}
+  //         style={styles.profilePic}
+  //       />
+  //       <TouchableOpacity onPress={selectImage}>
+  //         <Text style={styles.text}>Upload Profile Picture</Text>
+  //       </TouchableOpacity>
+  //       <Button title="Logout" onPress={handleLogout} />
+  //     </>
+  //   );
+  // }
   return (
-    <View>
-      {renderForm()}
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        onChangeText={setEmail}
+        value={email}
+        placeholder="Email"
+        placeholderTextColor={'black'}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
+        onChangeText={setPassword}
+        value={password}
+        placeholder="Password"
+        placeholderTextColor={'black'}
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonContent}>Submit</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Sign up' as never)}>
+        <Text style={styles.buttonContent}>Go to sign up</Text>
+      </TouchableOpacity>
     </View>
   );
-};
+}
+
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.5,
     justifyContent: 'center',
     padding: 20,
   },
@@ -256,19 +180,35 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 10,
-    color:'red'
   },
   displayName: {
     marginTop: 20,
     fontSize: 18,
     fontWeight: 'bold',
-    color:'red'
+    color: 'black'
   },
   profilePic: {
-    width: 100, 
-    height: 100, 
-    borderRadius: 50, 
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
+  button: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B2BEB5',
+    padding: 10,
+    borderRadius: 10,
+    margin: 10,
+    height: 50,
+  },
+  buttonContent: {
+    fontSize: 18,
+    color: 'black'
+  },
+  text: {
+    color: 'black'
+  }
 });
 
-export default LoginPage;
+export default LoginPage

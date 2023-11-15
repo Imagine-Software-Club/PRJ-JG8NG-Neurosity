@@ -8,7 +8,6 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 let app : firebase.FirebaseApp
-const  EXPO_PUBLIC_FIREBASE_API_KEY =  "AIzaSyB03Et0W-Xwpa2OO1d65ahF5SH_zVdjPDg";
 try {
   app = getApp()
 } catch(error) {

@@ -1,10 +1,32 @@
-import { User, onAuthStateChanged } from 'firebase/auth';
+import { User, onAuthStateChanged, signOut } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import { auth } from '../firebase';
+import { useNavigation } from '@react-navigation/native';
 
 const HomePage = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [displayName, setDisplayName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigation = useNavigation()
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setIsLoggedIn(false);
+      setDisplayName('');
+      navigation.navigate('Landing' as never)
+
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+      }
+      else {
+        Alert.alert('Error', 'An unknown error occurred');
+      }
+    }
+  };
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -12,7 +34,7 @@ const HomePage = () => {
       setUser(user);
     });
   },[]);
-  const welcomeMessage = user ? `Welcome, ${user.email || 'User'}` : 'Welcome to Your App';
+  const welcomeMessage = user ? `Welcome, ${user.displayName || 'User'}` : 'Welcome to Your App';
 
   return (
     <View style={styles.container}>
@@ -22,6 +44,7 @@ const HomePage = () => {
       <View style={styles.content}>
         <Text style={styles.subtitle}>Enjoy the app's features</Text>
         <Button title="Get Started" onPress={() => console.log('Getting Started')} />
+        <Button title="Log Out" onPress={handleLogout} />
       </View>
     </View>
   );
