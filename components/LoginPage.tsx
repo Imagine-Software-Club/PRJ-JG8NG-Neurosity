@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, Button, Alert, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { TextInput, Button, Alert, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { Text, View } from './Themed';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { launchImageLibrary, ImageLibraryOptions } from 'react-native-image-picker';
 import { app } from '../firebase';
 import { useNavigation } from '@react-navigation/native';
+
 const auth = getAuth(app);
 
 type FormType = 'login' | 'signup' | null;
+export const image = require('../assets/images/background.png');
 
 export const LoginPage: React.FC = () => {
   const navigation = useNavigation();
@@ -42,7 +44,7 @@ export const LoginPage: React.FC = () => {
         if (userCredential.user) {
           setIsLoggedIn(true);
           setDisplayName(userCredential.user.displayName || 'User');
-          setFormType(null)
+          // setFormType(null)
         }
       });
     } 
@@ -67,13 +69,7 @@ export const LoginPage: React.FC = () => {
         if (userCredential.user) {
           await updateProfile(userCredential.user, { displayName: username });
           setIsLoggedIn(true);
-          setDisplayName(userCredential.user.displayName || 'User');
-
-          /// Reset state
-          setDisplayName('')
-          setEmail('')
-          setPassword('')
-          setUsername('')
+          setDisplayName(userCredential.user.displayName || 'User')
         } 
         else {
           Alert.alert('Signup Error', 'Unable to find user after signup');
@@ -95,7 +91,9 @@ export const LoginPage: React.FC = () => {
       await signOut(auth); 
       setIsLoggedIn(false); 
       setDisplayName('');
-      navigation.navigate('Home')
+      setPassword('')
+      setEmail('')
+      setFormType(null)
     } 
     catch (error) {
       if (error instanceof Error) {
@@ -177,7 +175,7 @@ export const LoginPage: React.FC = () => {
   const renderForm = () => {
     if (isLoggedIn) {
       return (
-        <>
+        <View style={styles.container}>
           <Text style={styles.displayName}>Hello, {displayName}!</Text>
           <Image
             source={profilePic ? { uri: profilePic } : require(defaultPhotoPath)}
@@ -187,13 +185,13 @@ export const LoginPage: React.FC = () => {
             <Text>Upload Profile Picture</Text>
           </TouchableOpacity>
           <Button title="Logout" onPress={handleLogout} />
-        </>
+        </View>
       );
     }
     switch (formType) {
       case 'login':
         return (
-          <>
+          <View style={styles.container}>
             <TextInput
               style={styles.input}
               onChangeText={setEmail}
@@ -210,11 +208,11 @@ export const LoginPage: React.FC = () => {
               secureTextEntry
             />
             <Button title="Submit" onPress={handleLogin} />
-          </>
+          </View>
         );
       case 'signup':
         return (
-          <>
+          <View style={styles.container}>
             <TextInput
               style={styles.input}
               onChangeText={setEmail}
@@ -237,23 +235,24 @@ export const LoginPage: React.FC = () => {
               secureTextEntry
             />
             <Button title="Submit" onPress={handleSignup} />
-          </>
+          </View>
         );
       default:
         return (
-          <>
+          <View style={styles.container}>
             <Button title="Login" onPress={() => setFormType('login')} />
             <Button title="Signup" onPress={() => setFormType('signup')} />
-          </>
+          </View>
         );
     }
   };
 
-  return (
-    <View>
-      {renderForm()}
-    </View>
-  );
+  // return (
+  //   <View style={styles.container}>
+  //         {renderForm()}                
+  //   </View>
+  // );
+  return renderForm();
 };
 
 const styles = StyleSheet.create({
@@ -280,6 +279,11 @@ const styles = StyleSheet.create({
     height: 100, 
     borderRadius: 50, 
   },
+  image: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+  }
 });
 
 export default LoginPage;
