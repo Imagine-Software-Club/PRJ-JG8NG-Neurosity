@@ -4,13 +4,14 @@ import { Text, View } from './Themed';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { launchImageLibrary, ImageLibraryOptions } from 'react-native-image-picker';
-import app from '../firebase';
-
+import { app } from '../firebase';
+import { useNavigation } from '@react-navigation/native';
 const auth = getAuth(app);
 
 type FormType = 'login' | 'signup' | null;
 
 export const LoginPage: React.FC = () => {
+  const navigation = useNavigation();
   const defaultPhotoPath:string = '../assets/images/default_profile_pic.png';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +20,7 @@ export const LoginPage: React.FC = () => {
   const [displayName, setDisplayName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profilePic, setProfilePic] = useState<string | null>(null);
+
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -40,6 +42,8 @@ export const LoginPage: React.FC = () => {
         if (userCredential.user) {
           setIsLoggedIn(true);
           setDisplayName(userCredential.user.displayName || 'User');
+          navigation.navigate('Home');
+
         }
       });
     } 
@@ -252,13 +256,13 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 10,
-    color:'white'
+    color:'red'
   },
   displayName: {
     marginTop: 20,
     fontSize: 18,
     fontWeight: 'bold',
-    color:'white'
+    color:'red'
   },
   profilePic: {
     width: 100, 

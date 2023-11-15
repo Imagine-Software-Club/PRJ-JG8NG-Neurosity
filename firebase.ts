@@ -1,16 +1,19 @@
 // Import the functions you need from the SDKs you need
 import firebase, { initializeApp, getApp } from "firebase/app";
 import 'firebase/auth'
+import { getAuth } from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 let app : firebase.FirebaseApp
+const  EXPO_PUBLIC_FIREBASE_API_KEY =  "AIzaSyB03Et0W-Xwpa2OO1d65ahF5SH_zVdjPDg";
 try {
   app = getApp()
 } catch(error) {
   const firebaseConfig = {
+    
     apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY, 
     authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
     projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID, 
@@ -22,5 +25,5 @@ try {
 
 }
 // Initialize Firebase
-
-export default app
+const auth = getAuth(app);
+export {app, auth};

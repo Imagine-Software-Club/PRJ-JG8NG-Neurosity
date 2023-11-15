@@ -6,5 +6,6 @@ export default function Login() {
         <View>
             <LoginPage/>
         </View>
+   
     );
 }
