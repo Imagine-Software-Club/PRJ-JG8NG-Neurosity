@@ -29,9 +29,9 @@ const argv = yargs(hideBin(process.argv))
   .argv;
 
 /**Neurosity API Auth Credentials */
-const deviceId = "daeb5b2dae679000d1411bd54afa08a2";
-const email = "imagineSoftwareNeurosity@gmail.com";
-const password = "pybXyd-jexnov-qezza4";
+const deviceId = process.env.DEVICE_ID || "";
+const email = process.env.EMAIL || "";
+const password = process.env.PASSWORD || "";
 
 /**Verify ENV variables by trying to Log In */
 const verifyEnvs =(email, password, deviceId) =>{
