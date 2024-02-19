@@ -147,8 +147,13 @@ const main = async () => {
         let fileExists = fs.existsSync(filename);
         //Append header if file does not exist otherwise set to empty string;
         let csvContent = fileExists ? '' : 'label,metric,probability,timestamp\n';
+
+        // Convert milliseconds to hh:mm:ss
+        let date = new Date(timestamp); 
+        let formattedTime = date.toISOString().substring(11, 19);
+      
         const rows = []
-        csvContent += [label, metric,probability,timestamp].join(',') + '\n';
+        csvContent += [label, metric,probability,formattedTime].join(',') + '\n';
         
         if (fileExists){
             fs.appendFileSync(filename, csvContent);
