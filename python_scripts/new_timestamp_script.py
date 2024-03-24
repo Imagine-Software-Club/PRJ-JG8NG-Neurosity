@@ -1,15 +1,22 @@
 import pandas as pd
 import sys
 import os
+from datetime import datetime
 
-def user_time_df(input_df, user_input_date):
-    user_date = pd.to_datetime(user_input_date, utc=True)
-    print(user_date)
-    newtime = pd.to_datetime(input_df['timestamp'], unit='ms', utc=True) - user_date
-    return newtime
+def user_time_df(input_df, user_datetime):
+    # Convert input_df['timestamp'] to pd datetime
+    input_df['timestamp'] = pd.to_datetime(input_df['timestamp'])
+
+    # Convert user_datetime to pd datetime
+    user_datetime = pd.to_datetime(user_datetime)
+
+    # Return only the seconds float value of the difference (from dt datetime time delta object)
+    time_diff_seconds = (input_df['timestamp'] - user_datetime).dt.total_seconds()
+
+    return time_diff_seconds
 
 if len(sys.argv) < 3:
-    print("Usage: python script.py input_file.csv '2024-03-11 12:00:00'")
+    print("Usage: python script.py input_file.csv '2024-03-12 12:00:00 (UTC)'")
     sys.exit(1)
 
 # Get name of input csv
@@ -29,8 +36,8 @@ while os.path.exists(output_file):
 df = pd.read_csv(input_file)
 
 # Data processing of timestamp column
-df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-df.insert(4, 'new_timestamp', user_time_df(df, sys.argv[2]))
+df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed')
+df.insert(4, 'time', user_time_df(df, pd.to_datetime(sys.argv[2])))
 
 # Save new dataframe to output file and print to console 
 df.to_csv(output_file, index=False)
