@@ -16,7 +16,7 @@ def user_time_df(input_df, user_datetime):
     return time_diff_seconds
 
 if len(sys.argv) < 3:
-    print("Usage: python script.py input_file.csv '2024-03-12 12:00:00 (UTC)'")
+    print("Usage: python script.py input_file.csv '2024-03-12 12:00:00'") # The date inputted should be the same as the date when the user runs this script
     sys.exit(1)
 
 # Get name of input csv
