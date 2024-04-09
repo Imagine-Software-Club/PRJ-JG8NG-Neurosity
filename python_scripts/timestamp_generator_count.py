@@ -5,7 +5,7 @@ import pandas as pd
 import argparse
 
 def calc_zscore(df: pd.DataFrame) -> pd.DataFrame:
-    df['zscore'] = (df['focus'] - df['focus'].mean())/df['focus'].std()
+    df['zscore'] = (df['probability'] - df['probability'].mean())/df['probability'].std()
     return df
 
 def number_in_intervals(number, intervals):
@@ -17,7 +17,7 @@ def number_in_intervals(number, intervals):
 def find_intervals(df: pd.DataFrame, numintervals: int, intervalsize: float) -> List[Tuple[str, str]]:
 
     intervals: List[Tuple[str, str]] = []
-    df = df.sort_values(by=['focus'], ascending=False)
+    df = df.sort_values(by=['probability'], ascending=False)
 
     i = 0
     while len(intervals) < numintervals:
@@ -40,7 +40,7 @@ def main() -> None:
 
     df: pd.DataFrame = pd.read_csv(args.filename)
     df = calc_zscore(df)
-    df['focus'] = df['focus'].rolling(args.window, center=True).mean()
+    df['probability'] = df['probability'].rolling(args.window, center=True).mean()
 
     intervals: List[Tuple[str, str]] = find_intervals(df, args.numintervals, args.intervalsize)
 
