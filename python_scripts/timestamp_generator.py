@@ -27,6 +27,13 @@ def find_intervals(df: pd.DataFrame, zscore_threshold: float) -> List[Tuple[str,
 
     return intervals
 
+def convert_seconds_to_timestamp(seconds: float):
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    seconds = int(seconds % 60)
+
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
 def main() -> None:
 
     parser = argparse.ArgumentParser(description="Accept command line argument.")
@@ -45,7 +52,10 @@ def main() -> None:
 
     for interval in intervals:
         if interval[1] - interval[0] >= args.mininterval:
-            print(interval[0], interval[1])
+            starting_timestamp = convert_seconds_to_timestamp(interval[0])
+            ending_timestamp = convert_seconds_to_timestamp(interval[1])
+            print(starting_timestamp, ending_timestamp)
+
 
 if __name__ == "__main__":
     main()
