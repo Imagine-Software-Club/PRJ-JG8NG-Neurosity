@@ -41,7 +41,7 @@ def main() -> None:
     parser.add_argument('filename')  
     parser.add_argument('--window', '-w', type=int, default="200", help="Window Size")
     parser.add_argument('--numintervals', '-n', type=int, default="5", help="numintervals")
-    parser.add_argument('--intervalsize', '-s', type=int, default="30", help="intervalsize in seconds")
+    parser.add_argument('--intervalsize', '-s', type=int, default="20", help="intervalsize in seconds")
 
     args = parser.parse_args()
 
